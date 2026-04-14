@@ -5,9 +5,9 @@ import { z } from "zod";
 
 // Validación 
 const registerSchema = z.object({
-  name: z.string().min(3),
+  name: z.string().min(3), //minimo 3 caracteres en nombre
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(6), //minimo 6 caracteres en la contraseña
 });
 
 export async function POST(req: Request) {
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     }
 
     // Hashear contraseña
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10); //se coloca 10 ya que son las veces que bcrypt se va a ejecutar
 
     // Crear usuario
     const user = await prisma.user.create({
@@ -41,7 +41,10 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(user);
+    return NextResponse.json({
+        name: user.name,
+        email: user.email,
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Error en el registro" },
